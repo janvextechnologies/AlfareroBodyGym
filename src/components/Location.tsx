@@ -1,0 +1,136 @@
+import { MapPin, Navigation, Phone, Mail, MessageCircle } from "lucide-react";
+import { gym, whatsappLink } from "@/data/gym";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export function Location() {
+  const { location, contact } = gym;
+
+  const contactItems = [
+    {
+      Icon: Phone,
+      label: "Teléfono",
+      value: contact.phone,
+      href: contact.phoneHref,
+    },
+    {
+      Icon: MessageCircle,
+      label: "WhatsApp",
+      value: contact.phone,
+      href: whatsappLink(contact.whatsappMessage),
+    },
+    {
+      Icon: Mail,
+      label: "Correo",
+      value: contact.email,
+      href: `mailto:${contact.email}`,
+    },
+  ];
+
+  return (
+    <section id="ubicacion" className="bg-background py-24">
+      <div className="container-page">
+        <Reveal>
+          <SectionHeading
+            eyebrow={location.eyebrow}
+            title={location.title}
+            description={location.note}
+          />
+        </Reveal>
+
+        <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          <Reveal className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-white/5 bg-carbon p-6 sm:p-8">
+              <div className="flex items-start gap-4">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-brand/12 text-brand">
+                  <MapPin className="size-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="font-heading text-lg font-semibold uppercase tracking-wide text-foreground">
+                    Dirección
+                  </h3>
+                  <address className="mt-2 not-italic leading-relaxed text-muted-foreground">
+                    {location.addressLines.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </address>
+                </div>
+              </div>
+
+              <a
+                href={location.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "mt-6 h-11 w-full gap-2 px-5 font-semibold sm:w-auto",
+                )}
+              >
+                <Navigation className="size-4" aria-hidden="true" />
+                {location.directionsLabel}
+              </a>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {contactItems.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="group rounded-xl border border-white/5 bg-carbon p-4 transition hover:border-brand/40 hover:bg-steel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                >
+                  <item.Icon
+                    className="size-5 text-brand transition group-hover:scale-110"
+                    aria-hidden="true"
+                  />
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-fog">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-foreground">
+                    {item.value}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div className="h-full min-h-[320px] overflow-hidden rounded-2xl border border-white/5 bg-carbon">
+              {location.mapEmbedUrl ? (
+                <iframe
+                  title={`Mapa de ubicación de ${gym.name}`}
+                  src={location.mapEmbedUrl}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="h-full min-h-[320px] w-full border-0 grayscale-[0.2]"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-3 p-8 text-center">
+                  <span className="flex size-14 items-center justify-center rounded-full bg-brand/12 text-brand">
+                    <MapPin className="size-7" aria-hidden="true" />
+                  </span>
+                  <p className="font-heading text-lg font-semibold uppercase tracking-wide text-foreground">
+                    Mapa no disponible
+                  </p>
+                  <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+                    Agrega la URL de inserción de Google Maps en
+                    <span className="mx-1 rounded bg-white/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+                      gym.location.mapEmbedUrl
+                    </span>
+                    para mostrar aquí el mapa real del gimnasio.
+                  </p>
+                </div>
+              )}
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
