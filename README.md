@@ -159,4 +159,30 @@ Campos que el panel aún **no** edita y permanecen estáticos: navegación,
 estadísticas de la portada, títulos/eyebrow de sección, filosofía y beneficios
 de "Nosotros", `whatsappMessage`, `formNote`, `footer.tagline` y `siteUrl`.
 
+### 8. Health check y cron (evitar que Supabase se pause)
+
+El endpoint `GET /api/health` ejecuta una consulta real (`SELECT 1`) para
+mantener activa la base de datos. Está protegido con un token.
+
+1. Genera un secreto:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+   ```
+2. En **Vercel → Project Settings → Environment Variables** añade
+   `CRON_SECRET` con ese valor (entorno Production) y vuelve a desplegar.
+3. `vercel.json` ya define el cron diario a las **13:00 UTC** (≈ 7:00 en
+   Nicaragua): `{ "path": "/api/health", "schedule": "0 13 * * *" }`.
+   Vercel envía automáticamente `Authorization: Bearer <CRON_SECRET>`.
+
+Prueba manual:
+```bash
+curl -H "Authorization: Bearer <CRON_SECRET>" https://www.alfarerobodygym.com/api/health
+# o
+curl "https://www.alfarerobodygym.com/api/health?token=<CRON_SECRET>"
+```
+
+Sin token devuelve `401`; si falta `CRON_SECRET` en el entorno, `503`.
+Supabase (plan Free) pausa tras ~7 días de inactividad, así que una vez al día
+es suficiente.
+
 
