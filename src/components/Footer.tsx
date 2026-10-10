@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { gym, whatsappLink } from "@/data/gym";
+import { whatsappLink, type Gym } from "@/data/gym";
 import { SocialIcon } from "@/components/SocialIcon";
 import { CurrentYear } from "@/components/CurrentYear";
 
-export function Footer() {
+export function Footer({ content }: { content: Gym }) {
 
   return (
     <footer className="border-t border-white/10 bg-carbon">
@@ -16,8 +16,8 @@ export function Footer() {
               className="flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
             >
               <Image
-                src={gym.logo}
-                alt={`Logotipo de ${gym.name}`}
+                src={content.logo}
+                alt={`Logotipo de ${content.name}`}
                 width={56}
                 height={56}
                 className="h-12 w-12 rounded-md object-cover"
@@ -32,10 +32,10 @@ export function Footer() {
               </span>
             </a>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {gym.footer.tagline}
+              {content.footer.tagline}
             </p>
             <ul className="mt-5 flex gap-3">
-              {gym.contact.socials.map((social) => (
+              {content.contact.socials.map((social) => (
                 <li key={social.label}>
                   <a
                     href={social.href}
@@ -56,7 +56,7 @@ export function Footer() {
               Navegación
             </h2>
             <ul className="mt-4 space-y-2">
-              {gym.nav.map((link) => (
+              {content.nav.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
@@ -76,20 +76,20 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden="true" />
-                <span>{gym.location.addressLines.join(", ")}</span>
+                <span>{content.location.addressLines.join(", ")}</span>
               </li>
               <li>
                 <a
-                  href={gym.contact.phoneHref}
+                  href={content.contact.phoneHref}
                   className="flex items-center gap-2 transition-colors hover:text-brand"
                 >
                   <Phone className="size-4 shrink-0 text-brand" aria-hidden="true" />
-                  {gym.contact.phone}
+                  {content.contact.phone}
                 </a>
               </li>
               <li>
                 <a
-                  href={whatsappLink(gym.contact.whatsappMessage)}
+                  href={whatsappLink(content.contact.whatsapp, content.contact.whatsappMessage)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 transition-colors hover:text-brand"
@@ -100,11 +100,11 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href={`mailto:${gym.contact.email}`}
+                  href={`mailto:${content.contact.email}`}
                   className="flex items-center gap-2 transition-colors hover:text-brand"
                 >
                   <Mail className="size-4 shrink-0 text-brand" aria-hidden="true" />
-                  {gym.contact.email}
+                  {content.contact.email}
                 </a>
               </li>
             </ul>
@@ -113,7 +113,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-center sm:flex-row sm:text-left">
           <p className="text-xs text-fog">
-            © <CurrentYear /> {gym.name}. Todos los derechos reservados.
+            © <CurrentYear /> {content.name}. Todos los derechos reservados.
           </p>
           <p className="text-xs text-fog">
             Sitio informativo — información sujeta a cambios.

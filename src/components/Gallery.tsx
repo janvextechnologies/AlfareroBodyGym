@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ZoomIn, X } from "lucide-react";
-import { gym } from "@/data/gym";
+import type { Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import {
@@ -15,14 +15,17 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-const spanClasses: Record<NonNullable<(typeof gym.gallery.images)[number]["span"]>, string> = {
+const spanClasses: Record<
+  NonNullable<Gym["gallery"]["images"][number]["span"]>,
+  string
+> = {
   normal: "col-span-1 row-span-1",
   wide: "col-span-2 row-span-1",
   tall: "col-span-1 row-span-2",
 };
 
-export function Gallery() {
-  const { gallery } = gym;
+export function Gallery({ content }: { content: Gym }) {
+  const { gallery } = content;
   const [index, setIndex] = useState<number | null>(null);
   const active = index === null ? null : gallery.images[index];
 

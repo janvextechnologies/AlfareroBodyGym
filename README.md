@@ -85,8 +85,78 @@ El estado "Abierto ahora / Cerrado ahora" se calcula con la hora local de
 
 ## Notas
 
-- No hay backend, base de datos, autenticación ni panel administrativo.
-- El formulario de contacto no envía datos: abre WhatsApp con el mensaje
-  redactado.
-- La información marcada como *provisional* (dirección, teléfono, horarios,
-  perfiles del equipo) debe reemplazarse por la real antes de publicar.
+- El formulario público de contacto no envía datos: abre WhatsApp con el
+  mensaje redactado.
+- La información marcada como *provisional* debe reemplazarse por la real antes
+  de publicar.
+
+## Panel de administración
+
+El panel vive en `/admin` y, en esta fase, es **independiente de la landing**
+(los cambios se guardan en Supabase pero todavía no alimentan la web pública).
+
+### 1. Instalar dependencias
+
+```bash
+npm install
+```
+
+### 2. Variables de entorno
+
+Copia `.env.example` a `.env.local` y completa los valores. Se requieren:
+
+- `DATABASE_URL` — cadena de conexión al Postgres de Supabase (pooler).
+- `DIRECT_URL` — conexión directa, solo para migraciones (opcional).
+- `NEXT_PUBLIC_SUPABASE_URL` — URL pública del proyecto Supabase.
+- `SUPABASE_SERVICE_ROLE_KEY` — clave de servicio (solo servidor).
+- `SUPABASE_STORAGE_BUCKET` — bucket para las imágenes (por defecto `gym-media`).
+- `ADMIN_USERNAME` — usuario del administrador.
+- `ADMIN_PASSWORD_HASH` — hash bcrypt de la contraseña (`npm run hash-password`).
+- `SESSION_SECRET` — cadena aleatoria de 32+ caracteres.
+- `SESSION_TTL_HOURS` — duración de la sesión (opcional, 8 por defecto).
+
+### 3. Base de datos
+
+```bash
+npm run db:generate   # genera las migraciones en ./drizzle
+npm run db:migrate    # aplica las migraciones a Supabase
+npm run db:seed       # carga los datos iniciales actuales (incluye a Elving)
+npm run db:studio     # explorador de la base de datos (opcional)
+```
+
+### 4. Generar la contraseña del administrador
+
+```bash
+npm run hash-password
+```
+
+Copia el `ADMIN_PASSWORD_HASH` resultante en `.env.local`. Para cambiarla,
+repite el proceso y actualiza la variable (no se cambia desde el frontend).
+
+### 5. Supabase Storage
+
+Crea un bucket **público** (por defecto `gym-media`) para lectura, y sube/
+gestiona archivos desde el panel con la clave de servicio (solo servidor).
+Formatos permitidos: JPG, PNG y WebP, hasta 5 MB.
+
+### 6. Acceso
+
+Abre `/admin` en el navegador e inicia sesión. No hay enlaces al panel desde la
+landing. Rutas protegidas: `/admin/dashboard`, `/admin/portada`,
+`/admin/informacion`, `/admin/mision-vision`, `/admin/galeria`, `/admin/equipo`,
+`/admin/horarios`, `/admin/ubicacion` y `/admin/contacto`.
+
+### 7. Cómo se refleja en la web pública
+
+La landing lee su contenido de Supabase mediante `getPublicContent()`
+(`src/server/public/content.ts`), cacheado con el tag `gym-content`
+(`"use cache"` + `cacheTag`). Cada vez que guardas en el panel, los Server
+Actions llaman `updateTag("gym-content")`, por lo que el sitio se revalida y
+muestra los cambios. Si una tabla está vacía o la base de datos no responde, se
+usan los valores por defecto de `src/data/gym.ts` como respaldo.
+
+Campos que el panel aún **no** edita y permanecen estáticos: navegación,
+estadísticas de la portada, títulos/eyebrow de sección, filosofía y beneficios
+de "Nosotros", `whatsappMessage`, `formNote`, `footer.tagline` y `siteUrl`.
+
+

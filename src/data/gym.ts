@@ -300,9 +300,9 @@ export type Gym = typeof gym;
 
 /**
  * Construye un enlace de WhatsApp con un mensaje opcional.
- * El número se toma de `gym.contact.whatsapp` (formato internacional).
+ * El número debe venir en formato internacional, sin espacios ni símbolos.
  */
-export function whatsappLink(message?: string): string {
-  const base = `https://wa.me/${gym.contact.whatsapp}`;
+export function whatsappLink(whatsapp: string, message?: string): string {
+  const base = `https://wa.me/${whatsapp}`;
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }

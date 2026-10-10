@@ -1,11 +1,10 @@
 import Image from "next/image";
-import { gym } from "@/data/gym";
+import type { Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
-import { Badge } from "@/components/ui/badge";
 
-export function Team() {
-  const { team } = gym;
+export function Team({ content }: { content: Gym }) {
+  const { team } = content;
 
   return (
     <section id="equipo" className="bg-background py-24">
@@ -25,7 +24,7 @@ export function Team() {
                 <div className="relative">
                   <Image
                     src={member.image}
-                    alt={`${member.role} de ${gym.name} (perfil de ejemplo)`}
+                    alt={`${member.role} de ${content.name} (perfil de ejemplo)`}
                     width={800}
                     height={1000}
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"

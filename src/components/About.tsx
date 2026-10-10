@@ -7,7 +7,7 @@ import {
   Check,
   type LucideIcon,
 } from "lucide-react";
-import { gym } from "@/data/gym";
+import type { Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Card } from "@/components/ui/card";
@@ -19,8 +19,8 @@ const valueIcons: LucideIcon[] = [
   TrendingUp,
 ];
 
-export function About() {
-  const { about } = gym;
+export function About({ content }: { content: Gym }) {
+  const { about } = content;
 
   return (
     <section id="nosotros" className="border-b border-white/5 bg-ink py-24">

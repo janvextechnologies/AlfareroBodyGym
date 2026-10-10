@@ -1,10 +1,10 @@
 import { Target, Eye } from "lucide-react";
-import { gym } from "@/data/gym";
+import type { Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { Card } from "@/components/ui/card";
 
-export function MissionVision() {
-  const { missionVision } = gym;
+export function MissionVision({ content }: { content: Gym }) {
+  const { missionVision } = content;
 
   const cards = [
     { ...missionVision.mission, Icon: Target, accent: "bg-brand/12 text-brand" },

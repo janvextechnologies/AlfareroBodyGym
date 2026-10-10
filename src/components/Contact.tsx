@@ -2,15 +2,15 @@
 
 import { useState, type FormEvent } from "react";
 import { MessageCircle, Phone, Send } from "lucide-react";
-import { gym, whatsappLink } from "@/data/gym";
+import { whatsappLink, type Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SocialIcon } from "@/components/SocialIcon";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function Contact() {
-  const { contact } = gym;
+export function Contact({ content }: { content: Gym }) {
+  const { contact } = content;
   const [name, setName] = useState("");
   const [goal, setGoal] = useState("");
   const [message, setMessage] = useState("");
@@ -28,7 +28,7 @@ export function Contact() {
       .filter(Boolean)
       .join(" ");
     window.open(
-      whatsappLink(text),
+      whatsappLink(contact.whatsapp, text),
       "_blank",
       "noopener,noreferrer",
     );
@@ -47,7 +47,7 @@ export function Contact() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href={whatsappLink(contact.whatsappMessage)}
+              href={whatsappLink(contact.whatsapp, contact.whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(

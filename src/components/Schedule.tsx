@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Clock, Info } from "lucide-react";
-import { gym } from "@/data/gym";
+import type { Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Badge } from "@/components/ui/badge";
@@ -47,8 +47,8 @@ function getNowInTimeZone(timeZone: string): NowInfo {
   return { dayIndex, minutes, label };
 }
 
-export function Schedule() {
-  const { schedule } = gym;
+export function Schedule({ content }: { content: Gym }) {
+  const { schedule } = content;
   const [now, setNow] = useState<NowInfo | null>(null);
 
   const liveStatusEnabled = schedule.openStatusEnabled && !schedule.provisional;
@@ -163,13 +163,6 @@ export function Schedule() {
               })}
             </ul>
           </div>
-        </Reveal>
-
-        <Reveal delay={0.15}>
-          <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
-            <Info className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden="true" />
-            {schedule.note}
-          </p>
         </Reveal>
       </div>
     </section>

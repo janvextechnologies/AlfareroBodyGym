@@ -3,11 +3,11 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { gym } from "@/data/gym";
+import type { Gym } from "@/data/gym";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function Hero() {
+export function Hero({ content }: { content: Gym }) {
   const reduceMotion = useReducedMotion();
 
   const fade = (delay: number) =>
@@ -25,8 +25,8 @@ export function Hero() {
       className="relative isolate flex min-h-dvh items-center overflow-hidden"
     >
       <Image
-        src={gym.hero.image}
-        alt={gym.hero.imageAlt}
+        src={content.hero.image}
+        alt={content.hero.imageAlt}
         fill
         priority
         sizes="100vw"
@@ -45,7 +45,7 @@ export function Hero() {
         <div className="max-w-3xl">
           <motion.p {...fade(0)} className="eyebrow">
             <span className="h-px w-8 bg-brand" aria-hidden="true" />
-            {gym.hero.eyebrow}
+            {content.hero.eyebrow}
           </motion.p>
 
           <motion.h1
@@ -60,36 +60,36 @@ export function Hero() {
             {...fade(0.16)}
             className="mt-5 font-heading text-lg uppercase tracking-[0.12em] text-foreground/90 sm:text-2xl"
           >
-            {gym.tagline}
+            {content.tagline}
           </motion.p>
 
           <motion.p
             {...fade(0.24)}
             className="mt-6 max-w-2xl text-base leading-relaxed text-fog sm:text-lg"
           >
-            {gym.hero.description}
+            {content.hero.description}
           </motion.p>
 
           <motion.div {...fade(0.32)} className="mt-9 flex flex-wrap gap-3">
             <a
-              href={gym.hero.primaryCta.href}
+              href={content.hero.primaryCta.href}
               className={cn(
                 buttonVariants({ size: "lg" }),
                 "h-12 gap-2 px-6 text-sm font-semibold sm:text-base",
               )}
             >
-              {gym.hero.primaryCta.label}
+              {content.hero.primaryCta.label}
               <ArrowRight className="size-4" aria-hidden="true" />
             </a>
             <a
-              href={gym.hero.secondaryCta.href}
+              href={content.hero.secondaryCta.href}
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "h-12 gap-2 border-white/25 bg-white/5 px-6 text-sm font-semibold text-foreground hover:bg-white/10 sm:text-base",
               )}
             >
               <MessageCircle className="size-4" aria-hidden="true" />
-              {gym.hero.secondaryCta.label}
+              {content.hero.secondaryCta.label}
             </a>
           </motion.div>
 
@@ -97,7 +97,7 @@ export function Hero() {
             {...fade(0.4)}
             className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-white/10 pt-6"
           >
-            {gym.hero.stats.map((stat) => (
+            {content.hero.stats.map((stat) => (
               <div key={stat.label}>
                 <dt className="sr-only">{stat.label}</dt>
                 <dd>

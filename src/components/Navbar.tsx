@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Menu, MessageCircle } from "lucide-react";
-import { gym, whatsappLink } from "@/data/gym";
+import { whatsappLink, type Gym } from "@/data/gym";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-export function Navbar() {
+export function Navbar({ content }: { content: Gym }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -26,7 +26,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const whatsappHref = whatsappLink(gym.contact.whatsappMessage);
+  const whatsappHref = whatsappLink(content.contact.whatsapp, content.contact.whatsappMessage);
 
   return (
     <header
@@ -46,8 +46,8 @@ export function Navbar() {
           className="flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/70"
         >
           <Image
-            src={gym.logo}
-            alt={`Logotipo de ${gym.name}`}
+            src={content.logo}
+            alt={`Logotipo de ${content.name}`}
             width={48}
             height={48}
             className="h-11 w-11 rounded-md object-cover sm:h-12 sm:w-12"
@@ -64,7 +64,7 @@ export function Navbar() {
         </a>
 
         <ul className="hidden items-center gap-0.5 lg:flex">
-          {gym.nav.map((link) => (
+          {content.nav.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
@@ -112,7 +112,7 @@ export function Navbar() {
                 </SheetTitle>
               </SheetHeader>
               <ul className="flex flex-col gap-1 px-4">
-                {gym.nav.map((link) => (
+                {content.nav.map((link) => (
                   <li key={link.href}>
                     <SheetClose
                       render={

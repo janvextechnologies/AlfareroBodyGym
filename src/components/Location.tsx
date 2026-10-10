@@ -1,12 +1,12 @@
 import { MapPin, Navigation, Phone, Mail, MessageCircle } from "lucide-react";
-import { gym, whatsappLink } from "@/data/gym";
+import { whatsappLink, type Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function Location() {
-  const { location, contact } = gym;
+export function Location({ content }: { content: Gym }) {
+  const { location, contact } = content;
 
   const contactItems = [
     {
@@ -19,7 +19,7 @@ export function Location() {
       Icon: MessageCircle,
       label: "WhatsApp",
       value: contact.phone,
-      href: whatsappLink(contact.whatsappMessage),
+      href: whatsappLink(contact.whatsapp, contact.whatsappMessage),
     },
     {
       Icon: Mail,
@@ -36,7 +36,6 @@ export function Location() {
           <SectionHeading
             eyebrow={location.eyebrow}
             title={location.title}
-            description={location.note}
           />
         </Reveal>
 
@@ -103,7 +102,7 @@ export function Location() {
             <div className="h-full min-h-[320px] overflow-hidden rounded-2xl border border-white/5 bg-carbon">
               {location.mapEmbedUrl ? (
                 <iframe
-                  title={`Mapa de ubicación de ${gym.name}`}
+                  title={`Mapa de ubicación de ${content.name}`}
                   src={location.mapEmbedUrl}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -121,7 +120,7 @@ export function Location() {
                   <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
                     Agrega la URL de inserción de Google Maps en
                     <span className="mx-1 rounded bg-white/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-                      gym.location.mapEmbedUrl
+                      content.location.mapEmbedUrl
                     </span>
                     para mostrar aquí el mapa real del gimnasio.
                   </p>
