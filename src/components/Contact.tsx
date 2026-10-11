@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { MessageCircle, Phone, Send } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 import { whatsappLink, type Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -45,30 +45,20 @@ export function Contact({ content }: { content: Gym }) {
             className="max-w-none"
           />
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href={whatsappLink(contact.whatsapp, contact.whatsappMessage)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "h-12 gap-2 px-6 font-semibold",
-              )}
-            >
-              <MessageCircle className="size-4" aria-hidden="true" />
-              Escribir por WhatsApp
-            </a>
-            <a
-              href={contact.phoneHref}
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "h-12 gap-2 border-white/20 bg-white/5 px-6 font-semibold text-foreground hover:bg-white/10",
-              )}
-            >
-              <Phone className="size-4" aria-hidden="true" />
-              {contact.phone}
-            </a>
-          </div>
+          <a
+            href={`mailto:${contact.email}`}
+            className="mt-4 flex max-w-sm items-center gap-3 rounded-xl border border-white/10 bg-carbon p-4 transition-colors hover:border-brand/50"
+          >
+            <Mail className="size-5 shrink-0 text-brand" aria-hidden="true" />
+            <span>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-fog">
+                Correo
+              </span>
+              <span className="mt-1 block text-sm font-medium text-foreground">
+                {contact.email}
+              </span>
+            </span>
+          </a>
 
           <div className="mt-10">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-fog">

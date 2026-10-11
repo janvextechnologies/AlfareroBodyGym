@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { MapPin, Phone, Mail } from "lucide-react";
-import { whatsappLink, type Gym } from "@/data/gym";
+import { MapPin, Mail } from "lucide-react";
+import { type Gym } from "@/data/gym";
 import { SocialIcon } from "@/components/SocialIcon";
 import { CurrentYear } from "@/components/CurrentYear";
 
@@ -80,26 +80,6 @@ export function Footer({ content }: { content: Gym }) {
               </li>
               <li>
                 <a
-                  href={content.contact.phoneHref}
-                  className="flex items-center gap-2 transition-colors hover:text-brand"
-                >
-                  <Phone className="size-4 shrink-0 text-brand" aria-hidden="true" />
-                  {content.contact.phone}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={whatsappLink(content.contact.whatsapp, content.contact.whatsappMessage)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 transition-colors hover:text-brand"
-                >
-                  <SocialIcon name="whatsapp" className="size-4 shrink-0 text-brand" />
-                  WhatsApp
-                </a>
-              </li>
-              <li>
-                <a
                   href={`mailto:${content.contact.email}`}
                   className="flex items-center gap-2 transition-colors hover:text-brand"
                 >
@@ -115,9 +95,14 @@ export function Footer({ content }: { content: Gym }) {
           <p className="text-xs text-fog">
             © <CurrentYear /> {content.name}. Todos los derechos reservados.
           </p>
-          <p className="text-xs text-fog">
-            Sitio informativo — información sujeta a cambios.
-          </p>
+          <a
+            href="https://www.janvextechnologies.com/es"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-fog transition-colors hover:text-brand"
+          >
+            Desarrollado por Janvex Technologies
+          </a>
         </div>
       </div>
     </footer>

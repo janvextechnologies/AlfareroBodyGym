@@ -24,6 +24,13 @@ function toMinutes(time: string | null): number | null {
   return hours * 60 + minutes;
 }
 
+function formatTime(time: string): string {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
 type NowInfo = { dayIndex: number; minutes: number; label: string };
 
 function getNowInTimeZone(timeZone: string): NowInfo {
@@ -154,7 +161,7 @@ export function Schedule({ content }: { content: Gym }) {
                         </span>
                       ) : (
                         <span className="font-mono text-sm text-foreground/90 sm:text-base">
-                          {day.open} – {day.close}
+                          {formatTime(day.open!)} – {formatTime(day.close!)}
                         </span>
                       )}
                     </span>

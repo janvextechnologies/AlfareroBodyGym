@@ -238,11 +238,7 @@ export const gym = {
     // "Abierto ahora / Cerrado" calculado con la hora local configurada.
     openStatusEnabled: false,
     days: [
-      { day: "Lunes", open: "05:00", close: "21:00", closed: false },
-      { day: "Martes", open: "05:00", close: "21:00", closed: false },
-      { day: "Miércoles", open: "05:00", close: "21:00", closed: false },
-      { day: "Jueves", open: "05:00", close: "21:00", closed: false },
-      { day: "Viernes", open: "05:00", close: "21:00", closed: false },
+      { day: "Lunes a viernes", open: "05:00", close: "21:00", closed: false },
       { day: "Sábado", open: "05:00", close: "18:00", closed: false },
       { day: "Domingo", open: null, close: null, closed: true },
     ] as ScheduleDay[],
