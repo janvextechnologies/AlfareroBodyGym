@@ -95,14 +95,17 @@ export function Footer({ content }: { content: Gym }) {
           <p className="text-xs text-fog">
             © <CurrentYear /> {content.name}. Todos los derechos reservados.
           </p>
-          <a
-            href="https://www.janvextechnologies.com/es"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-brand transition-colors hover:text-brand/80"
-          >
-            Desarrollado por <span className="font-semibold">Janvex Technologies</span>
-          </a>
+          <p className="text-xs text-fog">
+            Desarrollado por{" "}
+            <a
+              href="https://www.janvextechnologies.com/es"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-brand transition-colors hover:text-brand/80"
+            >
+              Janvex Technologies
+            </a>
+          </p>
         </div>
       </div>
     </footer>
