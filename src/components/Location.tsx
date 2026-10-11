@@ -58,7 +58,7 @@ export function Location({ content }: { content: Gym }) {
             <div className="h-full min-h-[320px] overflow-hidden rounded-2xl border border-white/5 bg-carbon">
               {location.mapEmbedUrl ? (
                 <iframe
-                  title={`Mapa de ubicación de ${content.name}`}
+                  title={`Mapa de ubicación de ${content.name}, gimnasio en Rivas, Nicaragua`}
                   src={location.mapEmbedUrl}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
