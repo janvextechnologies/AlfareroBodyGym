@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(content.siteUrl),
     title: {
-      default: `${content.name} | Gimnasio de fuerza y musculación`,
+      default: `${content.name} | Gimnasio en Rivas, Nicaragua`,
       template: `%s | ${content.name}`,
     },
     description: content.description,
@@ -42,6 +42,11 @@ export async function generateMetadata(): Promise<Metadata> {
       "powerlifting",
       "Nicaragua",
       "gimnasio en Nicaragua",
+      "gimnasio en Rivas",
+      "gym en Rivas",
+      "Rivas, Nicaragua",
+      "musculación en Rivas",
+      "entrenamiento funcional en Rivas",
     ],
     authors: [{ name: content.name }],
     alternates: { canonical: "/" },
@@ -50,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "es_NI",
       url: content.siteUrl,
       siteName: content.name,
-      title: `${content.name} | ${content.tagline}`,
+      title: `${content.name} | Gimnasio en Rivas, Nicaragua`,
       description: content.description,
       images: [
         {
@@ -63,7 +68,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${content.name} | ${content.tagline}`,
+      title: `${content.name} | Gimnasio en Rivas, Nicaragua`,
       description: content.description,
       images: [content.hero.image],
     },

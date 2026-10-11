@@ -1,33 +1,12 @@
-import { MapPin, Navigation, Phone, Mail, MessageCircle } from "lucide-react";
-import { whatsappLink, type Gym } from "@/data/gym";
+import { MapPin, Navigation } from "lucide-react";
+import { type Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Location({ content }: { content: Gym }) {
-  const { location, contact } = content;
-
-  const contactItems = [
-    {
-      Icon: Phone,
-      label: "Teléfono",
-      value: contact.phone,
-      href: contact.phoneHref,
-    },
-    {
-      Icon: MessageCircle,
-      label: "WhatsApp",
-      value: contact.phone,
-      href: whatsappLink(contact.whatsapp, contact.whatsappMessage),
-    },
-    {
-      Icon: Mail,
-      label: "Correo",
-      value: contact.email,
-      href: `mailto:${contact.email}`,
-    },
-  ];
+  const { location } = content;
 
   return (
     <section id="ubicacion" className="bg-background py-24">
@@ -72,29 +51,6 @@ export function Location({ content }: { content: Gym }) {
                 <Navigation className="size-4" aria-hidden="true" />
                 {location.directionsLabel}
               </a>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {contactItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="group rounded-xl border border-white/5 bg-carbon p-4 transition hover:border-brand/40 hover:bg-steel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                >
-                  <item.Icon
-                    className="size-5 text-brand transition group-hover:scale-110"
-                    aria-hidden="true"
-                  />
-                  <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-fog">
-                    {item.label}
-                  </p>
-                  <p className="mt-1 text-sm font-medium text-foreground">
-                    {item.value}
-                  </p>
-                </a>
-              ))}
             </div>
           </Reveal>
 

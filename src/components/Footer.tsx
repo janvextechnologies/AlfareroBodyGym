@@ -99,9 +99,9 @@ export function Footer({ content }: { content: Gym }) {
             href="https://www.janvextechnologies.com/es"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-fog transition-colors hover:text-brand"
+            className="text-xs text-brand transition-colors hover:text-brand/80"
           >
-            Desarrollado por Janvex Technologies
+            Desarrollado por <span className="font-semibold">Janvex Technologies</span>
           </a>
         </div>
       </div>

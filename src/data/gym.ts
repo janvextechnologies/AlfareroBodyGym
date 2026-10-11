@@ -56,7 +56,7 @@ export const gym = {
   shortName: "Alfarero",
   tagline: "Transforma tu cuerpo. Fortalece tu mente.",
   description:
-    "Gimnasio de musculación, fuerza y entrenamiento funcional. Un espacio para entrenar con disciplina, acompañamiento y una comunidad que te impulsa.",
+    "Alfarero Body Gym es un gimnasio en Rivas, Nicaragua, con entrenamiento de musculación, fuerza y funcional. Encuentra horarios, ubicación y cómo empezar a entrenar.",
   city: "Nicaragua",
   siteUrl: "https://alfarerobodygym.com",
   logo: "/images/logo.png",
