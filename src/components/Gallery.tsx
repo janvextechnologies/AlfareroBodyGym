@@ -2,17 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ZoomIn, X } from "lucide-react";
+import { ZoomIn } from "lucide-react";
 import type { Gym } from "@/data/gym";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { GalleryLightbox } from "@/components/GalleryLightbox";
 import { cn } from "@/lib/utils";
 
 const spanClasses: Record<
@@ -27,7 +21,6 @@ const spanClasses: Record<
 export function Gallery({ content }: { content: Gym }) {
   const { gallery } = content;
   const [index, setIndex] = useState<number | null>(null);
-  const active = index === null ? null : gallery.images[index];
 
   return (
     <section
@@ -82,44 +75,12 @@ export function Gallery({ content }: { content: Gym }) {
         </div>
       </div>
 
-      <Dialog open={index !== null} onOpenChange={(open) => !open && setIndex(null)}>
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-[min(94vw,72rem)] gap-0 overflow-hidden border-white/10 bg-carbon p-0 ring-1"
-        >
-          {active ? (
-            <>
-              <DialogTitle className="sr-only">
-                {active.caption ?? "Imagen de las instalaciones"}
-              </DialogTitle>
-              <DialogDescription className="sr-only">
-                {active.alt}
-              </DialogDescription>
-              <div className="relative">
-                <Image
-                  src={active.src}
-                  alt={active.alt}
-                  width={1600}
-                  height={1067}
-                  sizes="94vw"
-                  className="max-h-[78vh] w-full object-contain"
-                />
-                <DialogClose
-                  aria-label="Cerrar imagen"
-                  className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-ink/80 text-foreground ring-1 ring-white/15 transition hover:bg-brand hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-                >
-                  <X className="size-5" aria-hidden="true" />
-                </DialogClose>
-                {active.caption ? (
-                  <p className="border-t border-white/10 px-4 py-3 text-sm font-medium text-fog">
-                    {active.caption}
-                  </p>
-                ) : null}
-              </div>
-            </>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <GalleryLightbox
+        images={gallery.images}
+        index={index}
+        onIndexChange={setIndex}
+        onClose={() => setIndex(null)}
+      />
     </section>
   );
 }
