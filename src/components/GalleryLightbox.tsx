@@ -1,14 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   TransformComponent,
   TransformWrapper,
@@ -28,6 +21,7 @@ type GalleryImage = Gym["gallery"]["images"][number];
 
 const SWIPE_THRESHOLD = 60;
 const MOVE_TOLERANCE = 8;
+const TOUCH_MARGIN = 10;
 
 export function GalleryLightbox({
   images,
@@ -47,11 +41,7 @@ export function GalleryLightbox({
   const zoomRef = useRef<ReactZoomPanPinchContentRef>(null);
   const isZoomedRef = useRef(false);
   const [isZoomed, setIsZoomed] = useState(false);
-
-  const pointers = useRef<Set<number>>(new Set());
-  const swipe = useRef<{ x: number; y: number; id: number; multi: boolean } | null>(null);
-  const downPos = useRef<{ x: number; y: number } | null>(null);
-  const movedRef = useRef(false);
+  const areaRef = useRef<HTMLDivElement>(null);
 
   const select = useCallback(
     (next: number) => {
@@ -71,86 +61,116 @@ export function GalleryLightbox({
     [index, total, select],
   );
 
-  // Navegación por teclado.
+  // Navegación por teclado (web): captura para no depender del bubbling.
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
+      if (event.key === "ArrowLeft" || event.key === "Left") {
         event.preventDefault();
         go(-1);
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === "ArrowRight" || event.key === "Right") {
         event.preventDefault();
         go(1);
       }
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", onKeyDown, { capture: true });
+    return () =>
+      document.removeEventListener("keydown", onKeyDown, { capture: true });
   }, [open, go]);
 
-  // Swipe con punteros (solo cuando no hay zoom).
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    pointers.current.add(event.pointerId);
-    movedRef.current = false;
-    if (pointers.current.size === 1) {
-      downPos.current = { x: event.clientX, y: event.clientY };
-      if (!isZoomedRef.current) {
-        swipe.current = {
-          x: event.clientX,
-          y: event.clientY,
-          id: event.pointerId,
-          multi: false,
-        };
+  // Gestos nativos en fase de captura: la librería de zoom hace
+  // stopPropagation, por lo que los manejadores React no recibirían el evento.
+  useEffect(() => {
+    const area = areaRef.current;
+    if (!area || !open) return;
+
+    const pointers = new Set<number>();
+    let startX = 0;
+    let startY = 0;
+    let startId = -1;
+    let multi = false;
+    let moved = false;
+
+    const onPointerDown = (event: PointerEvent) => {
+      pointers.add(event.pointerId);
+      if (pointers.size === 1) {
+        startX = event.clientX;
+        startY = event.clientY;
+        startId = event.pointerId;
+        multi = false;
+        moved = false;
+      } else {
+        multi = true;
       }
-    } else if (swipe.current) {
-      swipe.current.multi = true;
-    }
-  };
+    };
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (downPos.current) {
-      const moved = Math.hypot(
-        event.clientX - downPos.current.x,
-        event.clientY - downPos.current.y,
-      );
-      if (moved > MOVE_TOLERANCE) movedRef.current = true;
-    }
-  };
+    const onPointerMove = (event: PointerEvent) => {
+      if (
+        event.pointerId === startId &&
+        Math.hypot(event.clientX - startX, event.clientY - startY) >
+          MOVE_TOLERANCE
+      ) {
+        moved = true;
+      }
+    };
 
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    pointers.current.delete(event.pointerId);
-    downPos.current = null;
-    const current = swipe.current;
-    swipe.current = null;
-    if (
-      !current ||
-      current.multi ||
-      current.id !== event.pointerId ||
-      isZoomedRef.current
-    ) {
-      return;
-    }
-    const dx = event.clientX - current.x;
-    const dy = event.clientY - current.y;
-    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-      go(dx < 0 ? 1 : -1);
-    }
-  };
+    const onPointerUp = (event: PointerEvent) => {
+      pointers.delete(event.pointerId);
+      if (event.pointerId !== startId || multi) return;
 
-  const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
-    pointers.current.delete(event.pointerId);
-    if (swipe.current?.id === event.pointerId) swipe.current = null;
-  };
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
 
-  // Clic fuera de la imagen → cerrar.
-  const handleAreaClick = (event: ReactMouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-    if (target.closest("img") || target.closest("button")) return;
-    if (movedRef.current) {
-      movedRef.current = false;
-      return;
-    }
-    onClose();
-  };
+      const isSwipe =
+        !isZoomedRef.current &&
+        Math.abs(dx) > SWIPE_THRESHOLD &&
+        Math.abs(dx) > Math.abs(dy) * 1.4;
+
+      if (isSwipe) {
+        go(dx < 0 ? 1 : -1);
+        return;
+      }
+
+      if (moved) return;
+
+      // La librería aplica `pointer-events: none` a la imagen, así que el
+      // event.target nunca es el <img>. Usamos el rectángulo de la imagen.
+      const rect = area.querySelector("img")?.getBoundingClientRect();
+      const insideImage =
+        rect !== undefined &&
+        event.clientX >= rect.left - TOUCH_MARGIN &&
+        event.clientX <= rect.right + TOUCH_MARGIN &&
+        event.clientY >= rect.top - TOUCH_MARGIN &&
+        event.clientY <= rect.bottom + TOUCH_MARGIN;
+
+      const onButton =
+        document.elementFromPoint(event.clientX, event.clientY)?.closest(
+          "button",
+        ) != null;
+
+      if (!insideImage && !onButton) {
+        onClose();
+      }
+    };
+
+    const onPointerCancel = (event: PointerEvent) => {
+      pointers.delete(event.pointerId);
+    };
+
+    area.addEventListener("pointerdown", onPointerDown, { capture: true });
+    area.addEventListener("pointermove", onPointerMove, { capture: true });
+    area.addEventListener("pointerup", onPointerUp, { capture: true });
+    area.addEventListener("pointercancel", onPointerCancel, { capture: true });
+
+    return () => {
+      area.removeEventListener("pointerdown", onPointerDown, { capture: true });
+      area.removeEventListener("pointermove", onPointerMove, { capture: true });
+      area.removeEventListener("pointerup", onPointerUp, { capture: true });
+      area.removeEventListener("pointercancel", onPointerCancel, {
+        capture: true,
+      });
+    };
+  }, [open, go, onClose]);
 
   const navButton =
     "absolute top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-foreground ring-1 ring-white/15 backdrop-blur transition hover:bg-brand hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:flex";
@@ -228,12 +248,8 @@ export function GalleryLightbox({
             </div>
 
             <div
+              ref={areaRef}
               className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-2 sm:px-16"
-              onClick={handleAreaClick}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerCancel}
             >
               <TransformWrapper
                 ref={zoomRef}
