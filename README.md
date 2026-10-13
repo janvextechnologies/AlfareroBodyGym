@@ -162,26 +162,22 @@ de "Nosotros", `whatsappMessage`, `formNote`, `footer.tagline` y `siteUrl`.
 ### 8. Health check y cron (evitar que Supabase se pause)
 
 El endpoint `GET /api/health` ejecuta una consulta real (`SELECT 1`) para
-mantener activa la base de datos. Está protegido con un token.
+mantener activa la base de datos. Es público y siempre dinámico:
 
-1. Genera un secreto:
-   ```bash
-   node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
-   ```
-2. En **Vercel → Project Settings → Environment Variables** añade
-   `CRON_SECRET` con ese valor (entorno Production) y vuelve a desplegar.
-3. `vercel.json` ya define el cron diario a las **13:00 UTC** (≈ 7:00 en
-   Nicaragua): `{ "path": "/api/health", "schedule": "0 13 * * *" }`.
-   Vercel envía automáticamente `Authorization: Bearer <CRON_SECRET>`.
+- `200 {"status":"ok","db":"up"}`
+- `503 {"status":"down"}` si la base de datos no responde.
 
-Prueba manual:
-```bash
-curl -H "Authorization: Bearer <CRON_SECRET>" https://www.alfarerobodygym.com/api/health
-# o
-curl "https://www.alfarerobodygym.com/api/health?token=<CRON_SECRET>"
-```
+Se ejecuta una vez al día desde **cron-job.org**:
 
-Sin token devuelve `401`; si falta `CRON_SECRET` en el entorno, `503`.
+1. Crea/edita un cronjob con la URL:
+   `https://www.alfarerobodygym.com/api/health`
+2. Método: `GET`. Sin cabeceras ni cuerpo.
+3. Frecuencia: **una vez al día** (elige la hora y zona horaria que prefieras).
+4. Guarda y pulsa **Test run**: debe responder **200** con
+   `{"status":"ok","db":"up"}`.
+5. Revisa las ejecuciones en el **historial** de cron-job.org.
+
+Usa siempre la URL con `www` (sin `www` responde con una redirección 308).
 Supabase (plan Free) pausa tras ~7 días de inactividad, así que una vez al día
 es suficiente.
 
