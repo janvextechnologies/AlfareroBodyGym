@@ -249,7 +249,7 @@ export function GalleryLightbox({
 
             <div
               ref={areaRef}
-              className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-2 sm:px-16"
+              className="relative flex min-h-0 flex-1 touch-none items-center justify-center overflow-hidden px-2 sm:px-16"
             >
               <TransformWrapper
                 ref={zoomRef}
